@@ -402,6 +402,10 @@ class MultiDeviceDebuggerApp:
             row=0, column=5, sticky="ew", padx=8, pady=6
         )
 
+        self.beg_byte0_var.trace_add("write", lambda *_: self._update_beg_raw_preview())
+        self.beg_byte1_var.trace_add("write", lambda *_: self._update_beg_raw_preview())
+        self.beg_value_var.trace_add("write", lambda *_: self._update_beg_raw_preview())
+
         self.charger_construct_frame = ttk.Frame(frame)
         self.charger_construct_frame.grid(row=1, column=0, columnspan=8, sticky="ew")
         for column in range(6):
@@ -420,6 +424,13 @@ class MultiDeviceDebuggerApp:
         ).grid(row=0, column=3, sticky="ew", padx=8, pady=6)
         ttk.Label(self.charger_construct_frame, text="范围: 0~999999").grid(
             row=0, column=4, sticky="w", padx=8, pady=6
+        )
+
+        self.charger_voltage_var.trace_add(
+            "write", lambda *_: self._update_charger_raw_preview()
+        )
+        self.charger_current_var.trace_add(
+            "write", lambda *_: self._update_charger_raw_preview()
         )
 
         ttk.Label(frame, text="说明").grid(row=2, column=0, sticky="w", padx=8, pady=6)
@@ -748,6 +759,29 @@ class MultiDeviceDebuggerApp:
             self.beg.address_preview_var.set(format_can_id(self._resolve_beg_id()))
         except Exception as exc:
             self.beg.address_preview_var.set(f"错误: {exc}")
+
+    def _update_beg_raw_preview(self) -> None:
+        if self.command_protocol_var.get() != "beg1k0110":
+            return
+        try:
+            byte0 = parse_int(self.beg_byte0_var.get())
+            byte1 = parse_int(self.beg_byte1_var.get())
+            value = parse_int(self.beg_value_var.get())
+            payload = build_beg_payload(byte0, byte1, value)
+            self.raw_data_var.set(format_payload(payload))
+        except Exception:
+            pass
+
+    def _update_charger_raw_preview(self) -> None:
+        if self.command_protocol_var.get() != "charger":
+            return
+        try:
+            voltage = parse_int(self.charger_voltage_var.get())
+            current = parse_int(self.charger_current_var.get())
+            payload = build_charger_voltage_current_payload(voltage, current)
+            self.raw_data_var.set(format_payload(payload))
+        except Exception:
+            pass
 
     def _build_charger_frame(self, preset: CommandPreset) -> tuple[int, bytes]:
         addr = parse_int(self.charger.addr_var.get())

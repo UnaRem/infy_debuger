@@ -511,9 +511,9 @@ def decode_beg_payload(payload: bytes) -> tuple[str, str] | None:
 
 
 def describe_beg_value(payload: bytes, preset: CommandPreset) -> str:
-    tail = payload[4:8]
     if preset.name in {"模块状态", "逆变状态"}:
-        return f"状态字节: {format_payload(tail)}"
+        return decode_beg_status_bytes(payload)
+    tail = payload[4:8]
     value = int.from_bytes(tail, byteorder="big", signed=preset.signed)
     if preset.value_unit:
         return f"{value} {preset.value_unit}"
@@ -541,6 +541,126 @@ def decode_charger_payload(name: str, payload: bytes) -> str:
             f"组号字节={payload[2]:02X} 温度字节={payload[4]:02X} Walk字节={payload[6]:02X}"
         )
     return format_payload(payload)
+
+
+def decode_beg_status_bytes(status_bytes: bytes) -> str:
+    """解析BEG1K0110模块状态和逆变状态的告警位"""
+    if len(status_bytes) < 8:
+        return format_payload(status_bytes)
+
+    alerts = []
+
+    byte2 = status_bytes[2]
+    if byte2 & 0x01:
+        alerts.append("电网故障")
+    if byte2 & 0x02:
+        alerts.append("模块过温")
+    if byte2 & 0x04:
+        alerts.append("直流欠压")
+    if byte2 & 0x08:
+        alerts.append("输出降载")
+    if byte2 & 0x10:
+        alerts.append("模块过流")
+    if byte2 & 0x20:
+        alerts.append("风扇故障")
+    if byte2 & 0x40:
+        alerts.append("直流过压")
+    if byte2 & 0x80:
+        alerts.append("交流过压")
+
+    byte3 = status_bytes[3]
+    if byte3 & 0x01:
+        alerts.append("交流欠压")
+    if byte3 & 0x02:
+        alerts.append("交流过频")
+    if byte3 & 0x04:
+        alerts.append("交流欠频")
+    if byte3 & 0x08:
+        alerts.append("锁相失败")
+    if byte3 & 0x10:
+        alerts.append("模块故障")
+    if byte3 & 0x20:
+        alerts.append("模块保护")
+    if byte3 & 0x40:
+        alerts.append("模块告警")
+    if byte3 & 0x80:
+        alerts.append("模块待机")
+
+    byte4 = status_bytes[4]
+    if byte4 & 0x01:
+        alerts.append("模块运行")
+    if byte4 & 0x02:
+        alerts.append("模块关机")
+    if byte4 & 0x04:
+        alerts.append("模块开机")
+    if byte4 & 0x08:
+        alerts.append("模块复位")
+    if byte4 & 0x10:
+        alerts.append("模块调试")
+    if byte4 & 0x20:
+        alerts.append("模块测试")
+    if byte4 & 0x40:
+        alerts.append("模块校准")
+    if byte4 & 0x80:
+        alerts.append("模块升级")
+
+    byte5 = status_bytes[5]
+    if byte5 & 0x01:
+        alerts.append("直流过流")
+    if byte5 & 0x02:
+        alerts.append("交流过流")
+    if byte5 & 0x04:
+        alerts.append("功率模块故障")
+    if byte5 & 0x08:
+        alerts.append("控制板故障")
+    if byte5 & 0x10:
+        alerts.append("通讯故障")
+    if byte5 & 0x20:
+        alerts.append("风扇故障2")
+    if byte5 & 0x40:
+        alerts.append("过温降额")
+    if byte5 & 0x80:
+        alerts.append("过载降额")
+
+    byte6 = status_bytes[6]
+    if byte6 & 0x01:
+        alerts.append("电网异常")
+    if byte6 & 0x02:
+        alerts.append("频率异常")
+    if byte6 & 0x04:
+        alerts.append("电压异常")
+    if byte6 & 0x08:
+        alerts.append("谐波异常")
+    if byte6 & 0x10:
+        alerts.append("不平衡")
+    if byte6 & 0x20:
+        alerts.append("需量超限")
+    if byte6 & 0x40:
+        alerts.append("反向有功")
+    if byte6 & 0x80:
+        alerts.append("无功超限")
+
+    byte7 = status_bytes[7]
+    if byte7 & 0x01:
+        alerts.append("急停")
+    if byte7 & 0x02:
+        alerts.append("绝缘故障")
+    if byte7 & 0x04:
+        alerts.append("接地故障")
+    if byte7 & 0x08:
+        alerts.append("防雷故障")
+    if byte7 & 0x10:
+        alerts.append("烟感")
+    if byte7 & 0x20:
+        alerts.append("水浸")
+    if byte7 & 0x40:
+        alerts.append("门禁")
+    if byte7 & 0x80:
+        alerts.append("备用告警")
+
+    if not alerts:
+        return f"正常 [{format_payload(status_bytes)}]"
+    return f"⚠️ {', '.join(alerts)} [{format_payload(status_bytes)}]"
 
 
 def is_charger_frame(arbitration_id: int) -> bool:
