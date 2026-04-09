@@ -42,6 +42,38 @@ BEG_DEFAULT_TEMPLATES = {
 
 
 BEG_READ_PRESETS: tuple[CommandPreset, ...] = (
+    # 系统级参数 (0x01大类)
+    CommandPreset(
+        "系统视在功率",
+        "读取系统视在功率",
+        "beg",
+        scope_hint="broadcast",
+        value_unit="mVA",
+        signed=True,
+        byte0=0x01,
+        byte1=0x01,
+    ),
+    CommandPreset(
+        "系统有功功率",
+        "读取系统有功功率",
+        "beg",
+        scope_hint="broadcast",
+        value_unit="mW",
+        signed=True,
+        byte0=0x01,
+        byte1=0x02,
+    ),
+    CommandPreset(
+        "系统无功功率",
+        "读取系统无功功率",
+        "beg",
+        scope_hint="broadcast",
+        value_unit="mVar",
+        signed=True,
+        byte0=0x01,
+        byte1=0x03,
+    ),
+    # 系统直流侧参数 (0x10大类)
     CommandPreset(
         "系统直流电压",
         "读取系统直流侧电压",
@@ -61,6 +93,16 @@ BEG_READ_PRESETS: tuple[CommandPreset, ...] = (
         byte1=0x02,
     ),
     CommandPreset(
+        "模块数",
+        "读取系统中模块数量",
+        "beg",
+        scope_hint="broadcast",
+        value_unit="个",
+        byte0=0x10,
+        byte1=0x10,
+    ),
+    # 模块直流侧参数 (0x11大类)
+    CommandPreset(
         "模块直流电压",
         "读取模块直流侧电压",
         "beg",
@@ -76,8 +118,103 @@ BEG_READ_PRESETS: tuple[CommandPreset, ...] = (
         byte0=0x11,
         byte1=0x02,
     ),
+    CommandPreset(
+        "交流AB线电压",
+        "读取交流AB线电压",
+        "beg",
+        value_unit="mV",
+        byte0=0x11,
+        byte1=0x03,
+    ),
+    CommandPreset(
+        "交流BC线电压",
+        "读取交流BC线电压",
+        "beg",
+        value_unit="mV",
+        byte0=0x11,
+        byte1=0x04,
+    ),
+    CommandPreset(
+        "交流CA线电压",
+        "读取交流CA线电压",
+        "beg",
+        value_unit="mV",
+        byte0=0x11,
+        byte1=0x05,
+    ),
+    CommandPreset(
+        "模块环境温度",
+        "读取模块环境温度",
+        "beg",
+        value_unit="m°C",
+        byte0=0x11,
+        byte1=0x06,
+    ),
     CommandPreset("模块状态", "读取模块状态字", "beg", byte0=0x11, byte1=0x10),
-    CommandPreset("逆变状态", "读取逆变状态字", "beg", byte0=0x11, byte1=0x11),
+    CommandPreset("模块组号", "读取模块组号", "beg", byte0=0x11, byte1=0x20),
+    CommandPreset("逆变状态3-0", "读取逆变状态字节3-0", "beg", byte0=0x11, byte1=0x12),
+    CommandPreset("逆变故障3-0", "读取逆变故障字节3-0", "beg", byte0=0x11, byte1=0x13),
+    CommandPreset("逆变故障7-4", "读取逆变故障字节7-4", "beg", byte0=0x11, byte1=0x14),
+    CommandPreset(
+        "逆变故障8+DC故障", "读取逆变故障8和DC故障", "beg", byte0=0x11, byte1=0x15
+    ),
+    # 交流侧参数 (0x21大类)
+    CommandPreset(
+        "交流A相电压",
+        "读取交流A相电压",
+        "beg",
+        value_unit="mV",
+        byte0=0x21,
+        byte1=0x01,
+    ),
+    CommandPreset(
+        "交流B相电压",
+        "读取交流B相电压",
+        "beg",
+        value_unit="mV",
+        byte0=0x21,
+        byte1=0x02,
+    ),
+    CommandPreset(
+        "交流C相电压",
+        "读取交流C相电压",
+        "beg",
+        value_unit="mV",
+        byte0=0x21,
+        byte1=0x03,
+    ),
+    CommandPreset(
+        "交流A相电流",
+        "读取交流A相电流",
+        "beg",
+        value_unit="mA",
+        byte0=0x21,
+        byte1=0x04,
+    ),
+    CommandPreset(
+        "交流B相电流",
+        "读取交流B相电流",
+        "beg",
+        value_unit="mA",
+        byte0=0x21,
+        byte1=0x05,
+    ),
+    CommandPreset(
+        "交流C相电流",
+        "读取交流C相电流",
+        "beg",
+        value_unit="mA",
+        byte0=0x21,
+        byte1=0x06,
+    ),
+    CommandPreset(
+        "交流频率",
+        "读取交流频率",
+        "beg",
+        value_unit="mHz",
+        byte0=0x21,
+        byte1=0x07,
+    ),
     CommandPreset(
         "总有功功率",
         "读取总有功功率",
@@ -88,6 +225,33 @@ BEG_READ_PRESETS: tuple[CommandPreset, ...] = (
         byte1=0x08,
     ),
     CommandPreset(
+        "A相有功功率",
+        "读取A相有功功率",
+        "beg",
+        value_unit="mW",
+        signed=True,
+        byte0=0x21,
+        byte1=0x09,
+    ),
+    CommandPreset(
+        "B相有功功率",
+        "读取B相有功功率",
+        "beg",
+        value_unit="mW",
+        signed=True,
+        byte0=0x21,
+        byte1=0x0A,
+    ),
+    CommandPreset(
+        "C相有功功率",
+        "读取C相有功功率",
+        "beg",
+        value_unit="mW",
+        signed=True,
+        byte0=0x21,
+        byte1=0x0B,
+    ),
+    CommandPreset(
         "总无功功率",
         "读取总无功功率",
         "beg",
@@ -95,6 +259,101 @@ BEG_READ_PRESETS: tuple[CommandPreset, ...] = (
         signed=True,
         byte0=0x21,
         byte1=0x0C,
+    ),
+    CommandPreset(
+        "A相无功功率",
+        "读取A相无功功率",
+        "beg",
+        value_unit="mVA",
+        signed=True,
+        byte0=0x21,
+        byte1=0x0D,
+    ),
+    CommandPreset(
+        "B相无功功率",
+        "读取B相无功功率",
+        "beg",
+        value_unit="mVA",
+        signed=True,
+        byte0=0x21,
+        byte1=0x0E,
+    ),
+    CommandPreset(
+        "C相无功功率",
+        "读取C相无功功率",
+        "beg",
+        value_unit="mVA",
+        signed=True,
+        byte0=0x21,
+        byte1=0x0F,
+    ),
+    CommandPreset(
+        "总视在功率",
+        "读取总视在功率",
+        "beg",
+        value_unit="mVA",
+        signed=True,
+        byte0=0x21,
+        byte1=0x10,
+    ),
+    CommandPreset(
+        "A相视在功率",
+        "读取A相视在功率",
+        "beg",
+        value_unit="mVA",
+        signed=True,
+        byte0=0x21,
+        byte1=0x11,
+    ),
+    CommandPreset(
+        "B相视在功率",
+        "读取B相视在功率",
+        "beg",
+        value_unit="mVA",
+        signed=True,
+        byte0=0x21,
+        byte1=0x12,
+    ),
+    CommandPreset(
+        "C相视在功率",
+        "读取C相视在功率",
+        "beg",
+        value_unit="mVA",
+        signed=True,
+        byte0=0x21,
+        byte1=0x13,
+    ),
+    CommandPreset(
+        "总功率因数",
+        "读取总功率因数",
+        "beg",
+        value_unit="0.001",
+        byte0=0x21,
+        byte1=0x14,
+    ),
+    CommandPreset(
+        "A相功率因数",
+        "读取A相功率因数",
+        "beg",
+        value_unit="0.001",
+        byte0=0x21,
+        byte1=0x15,
+    ),
+    CommandPreset(
+        "B相功率因数",
+        "读取B相功率因数",
+        "beg",
+        value_unit="0.001",
+        byte0=0x21,
+        byte1=0x16,
+    ),
+    CommandPreset(
+        "C相功率因数",
+        "读取C相功率因数",
+        "beg",
+        value_unit="0.001",
+        byte0=0x21,
+        byte1=0x17,
     ),
     CommandPreset(
         "系统高压侧电压",
@@ -207,6 +466,30 @@ BEG_CONTROL_PRESETS: tuple[CommandPreset, ...] = (
         default_value=0xA0,
         byte0=0x31,
         byte1=0x11,
+    ),
+    CommandPreset(
+        "恒流模式",
+        "设置充电模式为恒流",
+        "beg",
+        default_value=0xA0,
+        byte0=0x31,
+        byte1=0x12,
+    ),
+    CommandPreset(
+        "恒功率模式",
+        "设置充电模式为恒功率",
+        "beg",
+        default_value=0xA1,
+        byte0=0x31,
+        byte1=0x12,
+    ),
+    CommandPreset(
+        "恒压模式",
+        "设置充电模式为恒压",
+        "beg",
+        default_value=0xA2,
+        byte0=0x31,
+        byte1=0x12,
     ),
     CommandPreset(
         "开关机-开机",
@@ -330,6 +613,121 @@ BEG_CONTROL_PRESETS: tuple[CommandPreset, ...] = (
         default_value=600_000,
         byte0=0x51,
         byte1=0x05,
+    ),
+    CommandPreset(
+        "设置无功功率",
+        "设置无功功率(千分比)",
+        "beg",
+        value_unit="千分比",
+        default_value=0,
+        byte0=0x31,
+        byte1=0x60,
+    ),
+    CommandPreset(
+        "恒功率无功模式",
+        "设置无功模式为恒功率",
+        "beg",
+        default_value=0xA0,
+        byte0=0x31,
+        byte1=0x61,
+    ),
+    CommandPreset(
+        "恒无功模式",
+        "设置无功模式为恒无功",
+        "beg",
+        default_value=0xA1,
+        byte0=0x31,
+        byte1=0x61,
+    ),
+    CommandPreset(
+        "电压无功模式",
+        "设置无功模式为电压无功",
+        "beg",
+        default_value=0xA2,
+        byte0=0x31,
+        byte1=0x61,
+    ),
+    CommandPreset(
+        "无功使能",
+        "使能无功功能",
+        "beg",
+        default_value=0xA1,
+        byte0=0x31,
+        byte1=0xDD,
+    ),
+    CommandPreset(
+        "无功禁止",
+        "禁止无功功能",
+        "beg",
+        default_value=0xA0,
+        byte0=0x31,
+        byte1=0xDD,
+    ),
+    CommandPreset(
+        "低电压穿越使能",
+        "使能低电压穿越功能",
+        "beg",
+        default_value=0xA1,
+        byte0=0x31,
+        byte1=0xD0,
+    ),
+    CommandPreset(
+        "低电压穿越禁止",
+        "禁止低电压穿越功能",
+        "beg",
+        default_value=0xA0,
+        byte0=0x31,
+        byte1=0xD0,
+    ),
+    CommandPreset(
+        "高电压穿越使能",
+        "使能高电压穿越功能",
+        "beg",
+        default_value=0xA1,
+        byte0=0x31,
+        byte1=0xD1,
+    ),
+    CommandPreset(
+        "高电压穿越禁止",
+        "禁止高电压穿越功能",
+        "beg",
+        default_value=0xA0,
+        byte0=0x31,
+        byte1=0xD1,
+    ),
+    CommandPreset(
+        "防逆流使能",
+        "使能防逆流功能",
+        "beg",
+        default_value=0xA1,
+        byte0=0x31,
+        byte1=0xD6,
+    ),
+    CommandPreset(
+        "防逆流禁止",
+        "禁止防逆流功能",
+        "beg",
+        default_value=0xA0,
+        byte0=0x31,
+        byte1=0xD6,
+    ),
+    CommandPreset(
+        "有功降载速率",
+        "设置有功降载速率(%Prate/min)",
+        "beg",
+        value_unit="%/min",
+        default_value=3000,
+        byte0=0x31,
+        byte1=0x24,
+    ),
+    CommandPreset(
+        "有功升载速率",
+        "设置有功升载速率(%Prate/min)",
+        "beg",
+        value_unit="%/min",
+        default_value=3000,
+        byte0=0x31,
+        byte1=0x25,
     ),
 )
 
@@ -511,13 +909,74 @@ def decode_beg_payload(payload: bytes) -> tuple[str, str] | None:
 
 
 def describe_beg_value(payload: bytes, preset: CommandPreset) -> str:
-    if preset.name in {"模块状态", "逆变状态"}:
+    if preset.name in {
+        "模块状态",
+        "逆变状态",
+        "逆变状态3-0",
+        "逆变故障3-0",
+        "逆变故障7-4",
+        "逆变故障8+DC故障",
+    }:
         return decode_beg_status_bytes(payload)
+
     tail = payload[4:8]
     value = int.from_bytes(tail, byteorder="big", signed=preset.signed)
-    if preset.value_unit:
-        return f"{value} {preset.value_unit}"
-    return str(value)
+
+    # 人类友好的工程值格式化
+    unit = preset.value_unit
+    if not unit:
+        return str(value)
+
+    # 电压: mV -> V
+    if unit == "mV":
+        volts = value / 1000.0
+        return f"{volts:.2f} V ({value} mV)"
+
+    # 电流: mA -> A
+    elif unit == "mA":
+        amps = value / 1000.0
+        return f"{amps:.2f} A ({value} mA)"
+
+    # 功率: mW -> kW 或 W
+    elif unit == "mW":
+        if abs(value) >= 1_000_000:
+            kw = value / 1_000_000.0
+            return f"{kw:.2f} kW ({value} mW)"
+        else:
+            w = value / 1000.0
+            return f"{w:.2f} W ({value} mW)"
+
+    # 视在功率/无功功率: mVA/mVar -> kVA/kVar 或 VA/Var
+    elif unit in ("mVA", "mVar"):
+        if abs(value) >= 1_000_000:
+            kunit = value / 1_000_000.0
+            return f"{kunit:.2f} k{unit[1:]} ({value} {unit})"
+        else:
+            unit_val = value / 1000.0
+            return f"{unit_val:.2f} {unit[1:]} ({value} {unit})"
+
+    # 频率: mHz -> Hz
+    elif unit == "mHz":
+        hz = value / 1000.0
+        return f"{hz:.2f} Hz ({value} mHz)"
+
+    # 温度: m°C -> °C
+    elif unit == "m°C":
+        temp = value / 1000.0
+        return f"{temp:.1f} °C ({value} m°C)"
+
+    # 功率因数: 0.001 -> 实际值
+    elif unit == "0.001":
+        pf = value / 1000.0
+        return f"{pf:.3f}"
+
+    # 数量/个数直接显示
+    elif unit == "个":
+        return f"{value} 个"
+
+    # 其他单位直接显示
+    else:
+        return f"{value} {unit}"
 
 
 def charger_response_id(preset: CommandPreset, addr: int) -> int | None:
